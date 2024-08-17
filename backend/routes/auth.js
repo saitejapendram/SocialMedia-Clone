@@ -3,6 +3,9 @@ const zod = require("zod");
 const { User } = require("../db");
 const jwt = require("jsonwebtoken");
 const {JWT_SECRET} = require("../config");
+const multer = require("multer");
+const upload = require("../multer");
+
 
 const authRouter = express.Router();
 
@@ -11,7 +14,11 @@ const signupBody = zod.object({
     username: zod.string(),
     password: zod.string(),
     location: zod.string(),
-    occupation: zod.string()
+    occupation: zod.string(),
+    
+    
+    
+    
 })
 
 const signinBody = zod.object({
@@ -19,7 +26,11 @@ const signinBody = zod.object({
     password: zod.string()
 })
 
+
 authRouter.post("/signup", async (req, res) => {
+    
+    
+
     const { success } = signupBody.safeParse(req.body);
     
     if (!success) {
@@ -29,16 +40,18 @@ authRouter.post("/signup", async (req, res) => {
     if (userExist) {
         return res.status(404).json({message: "user already existed"});
     }
+    
+    
+
     const user = await User.create({
         email: req.body.email,
         username: req.body.username,
         password: req.body.password,
         location: req.body.location,
-        occupation: req.body.occupation
-
+        occupation: req.body.occupation,
     });
 
-    //const token = jwt.sign({userId: user._id}, JWT_SECRET);
+    
     
 
     res.status(200).jsonp({
@@ -48,6 +61,7 @@ authRouter.post("/signup", async (req, res) => {
 })
 
 authRouter.post("/signin", async (req, res) => {
+
     const { success } = signinBody.safeParse(req.body);
     if (!success) {
         return res.status(404).json({message:"Error while signin"});
@@ -62,9 +76,18 @@ authRouter.post("/signin", async (req, res) => {
     };
 
     const token = jwt.sign({userId:user._id}, JWT_SECRET);
-    res.status(200).json({token:token});
+    
+    res.status(200).json({
+                         token:token,
+                         id : user._id
+                        });
+    
 
 })
 
 
 module.exports = authRouter;
+
+
+
+

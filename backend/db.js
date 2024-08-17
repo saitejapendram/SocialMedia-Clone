@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 
-mongoose.connect("mongodb://localhost:27017/soialpedia")
+mongoose.connect("mongodb://localhost:27017/socialpedia")
         .then(() => {
             console.log("connected to db");
         })
@@ -39,6 +39,11 @@ const userSchema = new mongoose.Schema({
       }],
       location: String,
       occupation: String,
+      impressions: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+        default: []
+      }],
       friends : [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
